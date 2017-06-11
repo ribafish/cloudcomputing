@@ -6,6 +6,10 @@ Helpful links:
 
 ## 1. Configuration ##
 
+## Make the budget
+
+![budget](budget.png)
+
 ### Configure AWS CLI
 ```
 aws configure
