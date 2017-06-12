@@ -64,7 +64,7 @@ static REAL second   (void);
 static void *mempool;
 
 
-void main(void)
+int main(void)
 
     {
     char    buf[80];

@@ -31,6 +31,17 @@ descriptions and plots
 
 ### Disk benchmarks
 
+
+
+Sequential Reads
+Sequential Writes
+Sequential Reads and Writes
+Random Reads
+Random Writes
+Random Reads and Writes (randrw)
+
 ### CPU benchmarks
+
+
 
 ### Memory benchmarks
