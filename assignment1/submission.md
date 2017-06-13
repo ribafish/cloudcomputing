@@ -135,13 +135,11 @@ Performing Disk Benchmark ...
 
 ```
 
-*TODO: insert command-line listing*
-
-commented command-line listing used to prepare the Amazon EC2 instance
+**TODO: add come comments on commands where needed**
 
 ## 3. VM in OpenStack setup
 
-*TODO: inser command-line listing*
+**TODO: inser command-line listing**
 
 commented command-line listing used to prepare and launch the virtual
 machine in OpenStack
