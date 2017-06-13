@@ -3,6 +3,7 @@
 Helpful links: 
 
 * [CLI reference](http://docs.aws.amazon.com/cli/latest/reference/)
+* [how-can-i-create-ami-from-instance-store-based-ec2-instance](https://serverfault.com/questions/446794/how-can-i-create-ami-from-instance-store-based-ec2-instance)
 
 ## 1. Configuration ##
 
