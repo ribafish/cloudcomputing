@@ -9,9 +9,9 @@
 
 ## 2. AWS EC2 Setup
 
-### Configure AWS CLI
+### 2.1. Configure AWS CLI
 ```
-aws configure
+$ aws configure
 
 AWS Access Key ID [****************4237]:
 AWS Secret Access Key [****************Y1mr]:
@@ -19,29 +19,119 @@ Default region name [eu-central-1]:
 Default output format [None]:
 ```
 
-### Create key pair
+### 2.2. Create key pair
 
 ```
-aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text | out-file -encoding ascii -filepath MyK
+$ aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text | out-file -encoding ascii -filepath MyK
 eyPair.pem
 ```
 
-### Create security group
+### 2.3. Create security group
 
 ```
-aws ec2 create-security-group --group-name MySg --description "CCSG"
+$ aws ec2 create-security-group --group-name MySg --description "CCSG"
 {
     "GroupId": "sg-0eee8465"
 }
 
 ```
 
-### Add SSH rule to security group
+### 2.4. Add SSH rule to security group
 
 This will allow SSH traffic from any IP.
 
 ```
-aws ec2 authorize-security-group-ingress --group-name MySg --protocol tcp --port 22 --cidr 0.0.0.0/0
+$ aws ec2 authorize-security-group-ingress --group-name MySg --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+```
+
+### 2.5. Check the image if it follows requirements
+
+```
+$ aws ec2 describe-images --image-ids ami-f52bfa9a
+{
+    "Images": [
+        {
+            "VirtualizationType": "paravirtual",
+            "Name": "amzn-ami-minimal-pv-2017.03.rc-1.20170327-x86_64-s3",
+            "Hypervisor": "xen",
+            "ImageOwnerAlias": "amazon",
+            "ImageId": "ami-f52bfa9a",
+            "RootDeviceType": "instance-store",
+            "State": "available",
+            "BlockDeviceMappings": [],
+            "Architecture": "x86_64",
+            "ImageLocation": "amzn-ami-eu-central-1/20c6c7a2f174acd6c46f6741dcb762a1a1140f1b7d1584414516094b27a5b889/137112412989/amzn-ami-minimal-pv-2017.03.rc-1.20170327-x86_64.ext4.10g.manifest.xml",
+            "KernelId": "aki-931fe3fc",
+            "OwnerId": "137112412989",
+            "CreationDate": "2017-03-28T01:50:15.000Z",
+            "Public": true,
+            "ImageType": "machine",
+            "Description": "Amazon Linux AMI 2017.03.rc-1.20170327 x86_64 Minimal PV S3"
+        }
+    ]
+}
+```
+
+It does, so we can create the instance
+
+### 2.6. Create and run the instance
+
+```
+$ aws ec2 run-instances --image-id ami-f52bfa9a --count 1  --instance-type m3.medium --key-name MyKeyPair --security-groups MySg
+```
+
+### 2.7. SSH into instance: 
+
+* default user on Amazon AMI insatnces is `ec2-user`
+* to get the IP address of the instance, run `aws ec2 describe-instances` command and copy the value under `PublicDnsName` - you can also add `| grep "PublicDnsName"` to get just the public IP
+
+```
+$ aws ec2 describe-instances --instance-ids  i-0f7869d58c8c6b8f2 | grep "PublicDnsName"
+                                        "PublicDnsName": "ec2-52-59-152-59.eu-central-1.compute.amazonaws.com",
+                                "PublicDnsName": "ec2-52-59-152-59.eu-central-1.compute.amazonaws.com",
+                    "PublicDnsName": "ec2-52-59-152-59.eu-central-1.compute.amazonaws.com",
+```
+
+```
+$ ssh -i MyKeyPair.pem ec2-user@ec2-52-59-152-59.eu-central-1.compute.amazonaws.com
+The authenticity of host 'ec2-52-59-152-59.eu-central-1.compute.amazonaws.com (52.59.152.59)' can't be established.
+ECDSA key fingerprint is SHA256:qUd2NfLrtvUZYlFW2uSUzoGsxZE+gaXhVC6Na+13eKc.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'ec2-52-59-152-59.eu-central-1.compute.amazonaws.com,52.59.152.59' (ECDSA) to the list of known hosts.
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-ami/2017.03-release-notes/
+
+```
+### 2.8. Set up instance with needed tools
+
+```
+$ sudo yum update -y && sudo yum install -y gcc fio git vim aws-apitools-ec aws-amitools-ec2 openssh-clients
+```
+
+* Also, clone our repository which holds the benchmark scripts
+
+```
+$ git clone https://github.com/ribafish/cloudcomputing.git
+```
+
+### 2.9. Run benchmarks (multiple times)
+
+```
+$ ./perform_tests.sh 
+Performing CPU Benchmark ...
+Performing Memory Benchmark ...
+Performing Disk Benchmark ...
+  - seq read
+  - seq write
+  - seq read & write
+  - rand read
+  - rand write
+  - rand read & write
 
 ```
 
