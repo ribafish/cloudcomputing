@@ -135,6 +135,27 @@ Performing Disk Benchmark ...
 
 ```
 
+### 2.10. Terminate instance
+
+```
+aws ec2 terminate-instances --instance-ids i-0f7869d58c8c6b8f2
+{
+    "TerminatingInstances": [
+        {
+            "PreviousState": {
+                "Code": 16,
+                "Name": "running"
+            },
+            "InstanceId": "i-00aa2dd827fd6af2f",
+            "CurrentState": {
+                "Code": 32,
+                "Name": "shutting-down"
+            }
+        }
+    ]
+}
+```
+
 **TODO: add come comments on commands where needed**
 
 ## 3. VM in OpenStack setup
