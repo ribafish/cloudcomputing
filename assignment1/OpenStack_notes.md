@@ -1,6 +1,6 @@
-##3. VM in OpenStack setup
+## 3. VM in OpenStack setup
 
-###3.1  Configuration
+### 3.1  Configuration
 
 Download and source the OpenStack RC file
 
@@ -14,21 +14,21 @@ Load parameters into the environment
 $ source openrc
 ```
 
-###3.2 Import a key pair named 'group06key'
+### 3.2 Import a key pair named 'group06key'
 
 ```
 $ openstack keypair create --public-key group06key.pub keyPair
 ssh passphrase:group06
 ```
 
-###3.3 Allow SSH to the intances and allow pinging of the instances
+### 3.3 Allow SSH to the intances and allow pinging of the instances
 
 ```
 $ openstack security group rule create default \--protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0
 $ openstack security group rule create --protocol icmp \ default
 ```
 
-###3.4 Launch an instance
+### 3.4 Launch an instance
 
 ```
 $ openstack server create --flavor 604de11c-3222-4902-8523-11cc61b5b485 --image 11f6b8aa-31df-4b66-8b42-5ee9760c47ba --key-name group06key --security-group default proj1
@@ -72,5 +72,3 @@ Performing Disk Benchmark ...
   - rand write
   - rand read & write
 ```
-
-### 
