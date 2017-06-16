@@ -1,0 +1,30 @@
+randread: (g=0): rw=randread, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
+...
+fio-2.20
+Starting 4 processes
+randread: Laying out IO file (1 file / 64MiB)
+randread: Laying out IO file (1 file / 64MiB)
+randread: Laying out IO file (1 file / 64MiB)
+randread: Laying out IO file (1 file / 64MiB)
+
+randread: (groupid=0, jobs=4): err= 0: pid=62580: Fri Jun 16 15:17:35 2017
+   read: IOPS=1192k, BW=4655MiB/s (4881MB/s)(256MiB/55msec)
+    clat (usec): min=1, max=480, avg= 2.41, stdev= 3.17
+     lat (usec): min=1, max=480, avg= 2.53, stdev= 3.17
+    clat percentiles (usec):
+     |  1.00th=[    1],  5.00th=[    2], 10.00th=[    2], 20.00th=[    2],
+     | 30.00th=[    2], 40.00th=[    2], 50.00th=[    2], 60.00th=[    2],
+     | 70.00th=[    3], 80.00th=[    3], 90.00th=[    3], 95.00th=[    4],
+     | 99.00th=[    5], 99.50th=[    5], 99.90th=[    6], 99.95th=[   11],
+     | 99.99th=[   80]
+    lat (usec) : 2=1.28%, 4=92.14%, 10=6.52%, 20=0.02%, 50=0.02%
+    lat (usec) : 100=0.01%, 250=0.01%, 500=0.01%
+  cpu          : usr=35.35%, sys=63.26%, ctx=46, majf=0, minf=92
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwt: total=65536,0,0, short=0,0,0, dropped=0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+
+Run status group 0 (all jobs):
+   READ: bw=4655MiB/s (4881MB/s), 4655MiB/s-4655MiB/s (4881MB/s-4881MB/s), io=256MiB (268MB), run=55-55msec

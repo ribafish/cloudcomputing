@@ -1,0 +1,31 @@
+randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
+...
+fio-2.20
+Starting 4 processes
+randwrite: Laying out IO file (1 file / 64MiB)
+randwrite: Laying out IO file (1 file / 64MiB)
+randwrite: Laying out IO file (1 file / 64MiB)
+randwrite: Laying out IO file (1 file / 64MiB)
+
+randwrite: (groupid=0, jobs=4): err= 0: pid=45264: Fri Jun 16 08:27:13 2017
+  write: IOPS=712k, BW=2783MiB/s (2918MB/s)(256MiB/92msec)
+    clat (usec): min=2, max=1875, avg= 4.50, stdev=15.21
+     lat (usec): min=2, max=1876, avg= 4.65, stdev=15.28
+    clat percentiles (usec):
+     |  1.00th=[    3],  5.00th=[    3], 10.00th=[    4], 20.00th=[    4],
+     | 30.00th=[    4], 40.00th=[    4], 50.00th=[    4], 60.00th=[    4],
+     | 70.00th=[    4], 80.00th=[    4], 90.00th=[    5], 95.00th=[    5],
+     | 99.00th=[    8], 99.50th=[   20], 99.90th=[   33], 99.95th=[   60],
+     | 99.99th=[  788]
+    lat (usec) : 4=7.62%, 10=91.74%, 20=0.14%, 50=0.44%, 100=0.03%
+    lat (usec) : 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.01%
+    lat (msec) : 2=0.01%
+  cpu          : usr=21.69%, sys=73.24%, ctx=89, majf=0, minf=95
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwt: total=0,65536,0, short=0,0,0, dropped=0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+
+Run status group 0 (all jobs):
+  WRITE: bw=2783MiB/s (2918MB/s), 2783MiB/s-2783MiB/s (2918MB/s-2918MB/s), io=256MiB (268MB), run=92-92msec

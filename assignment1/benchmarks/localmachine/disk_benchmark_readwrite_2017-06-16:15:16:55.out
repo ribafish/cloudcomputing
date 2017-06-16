@@ -1,0 +1,41 @@
+readwrite: (g=0): rw=rw, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
+...
+fio-2.20
+Starting 4 processes
+readwrite: Laying out IO file (1 file / 64MiB)
+readwrite: Laying out IO file (1 file / 64MiB)
+readwrite: Laying out IO file (1 file / 64MiB)
+readwrite: Laying out IO file (1 file / 64MiB)
+
+readwrite: (groupid=0, jobs=4): err= 0: pid=62574: Fri Jun 16 15:17:34 2017
+   read: IOPS=108k, BW=421MiB/s (442MB/s)(129MiB/305msec)
+    clat (usec): min=0, max=773, avg= 2.31, stdev=10.79
+     lat (usec): min=0, max=773, avg= 2.42, stdev=10.80
+    clat percentiles (usec):
+     |  1.00th=[    1],  5.00th=[    1], 10.00th=[    1], 20.00th=[    1],
+     | 30.00th=[    1], 40.00th=[    2], 50.00th=[    2], 60.00th=[    2],
+     | 70.00th=[    2], 80.00th=[    2], 90.00th=[    3], 95.00th=[    4],
+     | 99.00th=[    6], 99.50th=[   11], 99.90th=[   66], 99.95th=[  225],
+     | 99.99th=[  532]
+  write: IOPS=107k, BW=418MiB/s (438MB/s)(127MiB/305msec)
+    clat (usec): min=0, max=22944, avg=31.61, stdev=663.76
+     lat (usec): min=1, max=22944, avg=31.79, stdev=663.78
+    clat percentiles (usec):
+     |  1.00th=[    1],  5.00th=[    1], 10.00th=[    1], 20.00th=[    1],
+     | 30.00th=[    2], 40.00th=[    2], 50.00th=[    2], 60.00th=[    2],
+     | 70.00th=[    2], 80.00th=[    3], 90.00th=[    3], 95.00th=[    4],
+     | 99.00th=[    8], 99.50th=[   32], 99.90th=[13888], 99.95th=[18048],
+     | 99.99th=[21120]
+    lat (usec) : 2=28.20%, 4=66.07%, 10=4.98%, 20=0.27%, 50=0.19%
+    lat (usec) : 100=0.03%, 250=0.06%, 500=0.05%, 750=0.02%, 1000=0.01%
+    lat (msec) : 2=0.01%, 4=0.01%, 10=0.02%, 20=0.07%, 50=0.01%
+  cpu          : usr=5.52%, sys=10.79%, ctx=487, majf=0, minf=98
+  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwt: total=32903,32633,0, short=0,0,0, dropped=0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+
+Run status group 0 (all jobs):
+   READ: bw=421MiB/s (442MB/s), 421MiB/s-421MiB/s (442MB/s-442MB/s), io=129MiB (135MB), run=305-305msec
+  WRITE: bw=418MiB/s (438MB/s), 418MiB/s-418MiB/s (438MB/s-438MB/s), io=127MiB (134MB), run=305-305msec
