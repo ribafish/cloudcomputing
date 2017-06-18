@@ -176,6 +176,10 @@ descriptions and plots
 
 ### Disk benchmarks
 
+1. Look at the disk measurements. Are they consistent with your expectations. If
+not, what could be the reason?
+2. Based on the comparison with the measurements on your local hard drive,
+what kind of storage solutions do you think the two clouds use?
 
 
 Sequential Reads
@@ -187,6 +191,19 @@ Random Reads and Writes (randrw)
 
 ### CPU benchmarks
 
+1. Look at linpack.sh and linpack.c and shortly describe how the benchmark
+works.
+2. Find out what the LINPACK benchmark measures (try Google). Would you
+expect paravirtualization to affect the LINPACK benchmark? Why?
+3. Look at your LINPACK measurements. Are they consistent with your
+expectations? If not, what could be the reason? 
+
 
 
 ### Memory benchmarks
+
+1. Find out how the memsweep benchmark works by looking at the shell script
+and the C code. Would you expect virtualization to affect the memsweep
+benchmark? Why?
+2. Look at your memsweep measurements. Are they consistent with your
+expectations. If not, what could be the reason?
