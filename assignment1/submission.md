@@ -1,4 +1,4 @@
-# Submission of Assignment 1
+# Assignment 1
 
 ## 1. AWS budget, 70% Notifier
 
