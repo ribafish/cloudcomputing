@@ -1,0 +1,25 @@
+{% set flavor_name = flavor_name or "Cloud Computing" %}
+{
+    "NovaServers.boot_and_list_server": [
+        {
+            "args": {
+                "flavor": {
+                    "name": "{{flavor_name}}"
+                },
+                "image": {
+                    "name": "ubuntu-16.04"
+                },
+                "detailed": true
+            },
+            "runner": {
+                "type": "constant",
+                "times": 1,
+                "concurrency": 1
+            },
+            "context": {
+                
+            }
+        }
+    ]
+}
+

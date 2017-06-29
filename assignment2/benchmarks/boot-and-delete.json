@@ -1,0 +1,42 @@
+{% set flavor_name = flavor_name or "Cloud Computing" %}
+{
+    "NovaServers.boot_and_delete_server": [
+        {
+            "args": {
+                "flavor": {
+                    "name": "{{flavor_name}}"
+                },
+                "image": {
+                    "name": "ubuntu-16.04"
+                },
+                "force_delete": false
+            },
+            "runner": {
+                "type": "constant",
+                "times": 10,
+                "concurrency": 2
+            },
+            "context": {
+            }
+        },
+        {
+            "args": {
+                "flavor": {
+                    "name": "{{flavor_name}}"
+                },
+                "image": {
+                    "name": "ubuntu-16.04"
+                },
+                "auto_assign_nic": true
+            },
+            "runner": {
+                "type": "constant",
+                "times": 10,
+                "concurrency": 2
+            },
+            "context": {
+                
+            }
+        }
+    ]
+}
