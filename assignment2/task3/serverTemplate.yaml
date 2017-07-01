@@ -43,7 +43,7 @@ parameters:
 
 resources:
 
-    CC_Frontend:
+    Servertemplate:
         type: OS::Nova::Server
         properties:
             flavor: {get_param: flavor}
