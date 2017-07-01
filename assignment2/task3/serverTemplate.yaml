@@ -1,0 +1,64 @@
+heat_template_version: 2015-10-15
+description: Server template
+
+parameters:
+
+    flavor:
+        type: string
+        label: Flavor
+        constraints:
+            - custom_constraint: nova.flavor
+
+    availability_zone: 
+        type: string
+        label: Availability Zone
+        default: Default
+
+
+    image:
+        type: string
+        label: Image Name
+        constraints:
+            - custom_constraint: glance.image
+
+    name:
+        type: string
+        label: Name of the Server
+    
+
+    key_pair:
+        type: string
+        label: Key Pair
+        constraints:
+            - custom_constraint: nova.keypair
+
+
+    security_groups:
+        type: comma_delimited_list
+        label: Security Group(s)
+        default: default
+
+    
+    networks:
+
+    public_network:
+        type: string
+        label: Public network name or ID
+        description: Public network with floating IP addresses.
+        default: public-net
+
+            networks: [{"subnet": {get_resource: CC_Subnet}, "floating_ip": String, "port_extra_properties": {"mac_address": String, "admin_state_up": Boolean, "qos_policy": String, "value_specs": {...}, "port_security_enabled": Boolean, "allowed_address_pairs": [{"ip_address": String, "mac_address": String}, {"ip_address": String, "mac_address": String}, ...], "binding:vnic_type": String}, "fixed_ip": String, "network": String, "port": String, "allocate_network": String, "uuid": String}]
+
+
+resources:
+
+    CC_Frontend:
+        type: OS::Nova::Server
+        properties:
+            flavor: {get_param: flavor}
+            key_name: { get_param: key_pair}
+            availability_zone: { get_param: availability_zone}
+            image: {get_param: image}
+            name: {get_param : name}
+            networks: [{"subnet": {get_resource: CC_Subnet}, "floating_ip": String, "port_extra_properties": {"mac_address": String, "admin_state_up": Boolean, "qos_policy": String, "value_specs": {...}, "port_security_enabled": Boolean, "allowed_address_pairs": [{"ip_address": String, "mac_address": String}, {"ip_address": String, "mac_address": String}, ...], "binding:vnic_type": String}, "fixed_ip": String, "network": String, "port": String, "allocate_network": String, "uuid": String}]
+            security_groups: { get_param: security_groups}

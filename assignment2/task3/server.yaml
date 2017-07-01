@@ -1,0 +1,207 @@
+heat_template_version: 2015-10-15
+description: One VM instance
+
+parameters:
+
+    name:
+        type: string
+        label: Name of the VM
+
+    routerName:
+        type: string
+        label: Name of the Router    
+
+    serverName:
+        type: string
+        label: Name of the Server
+
+    networkName:
+        type: string
+        label: Name of the Network
+
+    subnetName:
+        type: string
+        label: Name of the Subnet
+
+    CC_key_pair:
+        type: string
+        label: Key Pair
+        constraints:
+            - custom_constraint: nova.keypair
+
+
+    # key_pair:
+    #     type: string
+    #     label: Key Pair
+    #     constraints:
+    #         - custom_constraint: nova.keypair            
+
+    # flavor:
+    #     type: string
+    #     label: Flavor
+    #     constraints:
+    #         - custom_constraint: nova.flavor
+
+    # image:
+    #     type: string
+    #     label: Image Name
+    #     constraints:
+    #         - custom_constraint: glance.image
+
+    # network:
+    #     type: string
+    #     label: Network
+    #     constraints:
+    #         - custom_constraint: neutron.network
+
+    # zone:
+    #     type: string
+    #     label: Availability Zone
+    #     default: Default
+
+    # security_groups:
+    #     type: comma_delimited_list
+    #     label: Security Group(s)
+    #     default: default
+
+    # public_network:
+    #     type: string
+    #     label: Public network name or ID
+    #     description: Public network with floating IP addresses.
+    #     default: public-net
+
+resources:
+
+    CC_Security:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: CC_Security
+            rules:
+                - protocol: icmp
+                - protocol: tcp
+                port_range_min: 22
+                port_range_max: 22
+                - protocol: icmp
+                - protocol: tcp
+                port_range_min: 80
+                port_range_max: 80
+
+    CC_Network : 
+        type : OS::Neutron::Net
+        properties : 
+            name : { get_param: networkName }
+
+    CC_Subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            name: { get_param: subnetName }
+            network: CC_Network
+      
+    CC_Router:
+        type: OS::Neutron::Router
+        properties:
+            name: { get_param: routerName }
+            external_gateway_info:
+                network: { get_resource: CC_Network }
+           
+
+    CC_Router-interface:
+        type: OS::Neutron::RouterInterface
+        properties:
+            router_id: { get_resource: CC_Router }
+            subnet: { get_resource: CC_Subnet }
+
+    CC_Port:
+        type: OS::Neutron::Port
+        properties:
+            network: { get_resource: CC_Network }
+            name:
+                str_replace:
+                    template: port-VM_NAME
+                    params:
+                        VM_NAME: { get_param: name }
+            security_groups:
+                get_param: {get_resource: CC_Security}
+
+
+    CC_Floating_ip:
+        type: OS::Neutron::FloatingIP
+        properties:
+            floating_network: { get_resource: CC_Network }
+
+
+    CC_Floating_ip_assoc:
+        type: OS::Neutron::FloatingIPAssociation
+        properties:
+            floatingip_id: { get_resource: CC_Floating_ip }
+            port_id: { get_resource: CC_Port }
+
+    
+    CC_Frontend:
+        type: serverTemplate.yaml
+        properties:
+            key_name: {get_param: CC_key_pair}
+            flavor: Cloud Computing
+            availability_zone: Cloud Computing 2017
+            image: ubuntu-16.04
+            name: {get_param : serverName}
+            networks: [{"subnet": {get_resource: CC_Subnet}, "floating_ip": {get_resource: CC_Floating_ip}, "port_extra_properties": {"mac_address": String, "admin_state_up": Boolean, "qos_policy": String, "value_specs": {...}, "port_security_enabled": Boolean, "allowed_address_pairs": [{"ip_address": String, "mac_address": String}, {"ip_address": String, "mac_address": String}, ...], "binding:vnic_type": String}, "fixed_ip": String, "network": String, "port": String, "allocate_network": String, "uuid": String}]
+            security_groups: 
+                - { get_resource: CC_Security }
+                
+
+    cc_BackendGroup:
+        type: OS::Heat::ResourceGroup
+        properties:
+            count: 2
+            resource_def:
+                type: serverTemplate.yaml
+                properties:
+                    key_name: {get_param: CC_key_pair}
+                    flavor: Cloud Computing
+                    availability_zone: Cloud Computing 2017
+                    image: ubuntu-16.04
+                    name: {get_param : serverName}
+                    networks: [{"subnet": {get_resource: CC_Subnet}, "floating_ip": NOPE, "port_extra_properties": {"mac_address": String, "admin_state_up": Boolean, "qos_policy": String, "value_specs": {...}, "port_security_enabled": Boolean, "allowed_address_pairs": [{"ip_address": String, "mac_address": String}, {"ip_address": String, "mac_address": String}, ...], "binding:vnic_type": String}, "fixed_ip": String, "network": String, "port": String, "allocate_network": String, "uuid": String}]
+                    security_groups: 
+                        - { get_resource: CC_Security }
+          
+
+
+  
+
+    # This port is a separate resource used to assign the security groups
+    # to the VM. Can also be used to attach a OS::Neutron::FloatingIP to the VM.
+    # port:
+    #     type: OS::Neutron::Port
+    #     properties:
+    #         network: { get_param: network }
+    #         name:
+    #             str_replace:
+    #                 template: port-VM_NAME
+    #                 params:
+    #                     VM_NAME: { get_param: name }
+    #         security_groups:
+    #             get_param: security_groups
+    
+    # instance:
+    #     type: OS::Nova::Server
+    #     properties:
+    #         name: { get_param: name }
+    #         key_name: { get_param: key_pair }
+    #         image: { get_param: image }
+    #         flavor: { get_param: flavor }
+    #         availability_zone: { get_param: zone }
+    #         networks:
+    #             - port: { get_resource: port }
+
+outputs:
+    # ip:
+    #     description: Virtual IP address of instance
+    #     value: { get_attr: [ instance, first_address ] }
+    # port:
+    #     description: Port ID of instance
+    #     value: { get_resource: port }
+    floating_ip:
+        description: The floating_ip
+        value: { get_attr: [floating_ip, floating_ip_address] }
