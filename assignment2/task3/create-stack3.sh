@@ -5,3 +5,4 @@ openstack stack create -t server.yaml assignment2-task3-stack \
 --parameter "network=cc17-23-net"	\
 --parameter "subnet=cc17-23-subnet" \
 --parameter "key_pair=group06key" \
+--parameter "network_public=tu-internal"

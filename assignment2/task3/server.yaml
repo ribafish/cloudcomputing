@@ -29,6 +29,12 @@ parameters:
         constraints:
             - custom_constraint: nova.keypair
 
+    network_public:
+        type: string
+        label: Network
+        constraints:
+            - custom_constraint: neutron.network
+
     # key_pair:
     #     type: string
     #     label: Key Pair
@@ -97,11 +103,13 @@ resources:
 
     CC_Network : 
         type : OS::Neutron::Net
+        description: Private network
         properties : 
             name : { get_param: network }
 
     CC_Subnet:
         type: OS::Neutron::Subnet
+        description: Private subnet
         properties:
             name: { get_param: subnet }
             network: { get_resource: CC_Network }
@@ -113,14 +121,16 @@ resources:
       
     CC_Router:
         type: OS::Neutron::Router
+        description: External router
         properties:
             name: { get_param: router }
             external_gateway_info:
-                network: { get_resource: CC_Network }
+                network: { get_param: network_public }
            
 
     CC_Router-interface:
         type: OS::Neutron::RouterInterface
+        description: Interface between external router and private subnet
         properties:
             router_id: { get_resource: CC_Router }
             subnet: { get_resource: CC_Subnet }
@@ -134,13 +144,17 @@ resources:
                     template: port-VM_NAME
                     params:
                         VM_NAME: { get_param: name }
-            security_groups: {get_resource: CC_Security}
+            security_groups: [{get_resource: CC_Security}]
+
+            fixed_ips:
+                - subnet_id: { get_resource: CC_Subnet }
 
 
     CC_Floating_ip:
         type: OS::Neutron::FloatingIP
+        description: External floating ip
         properties:
-            floating_network: { get_resource: CC_Network }
+            floating_network: { get_param: network_public }
 
 
     CC_Floating_ip_assoc:
