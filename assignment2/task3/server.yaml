@@ -134,8 +134,7 @@ resources:
                     template: port-VM_NAME
                     params:
                         VM_NAME: { get_param: name }
-            security_groups:
-                get_param: {get_resource: CC_Security}
+            security_groups: {get_resource: CC_Security}
 
 
     CC_Floating_ip:
