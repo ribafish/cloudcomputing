@@ -27,7 +27,7 @@ parameters:
         type: string
         label: Key Pair
         constraints:
-            - custom_constraint: nova.keypair
+            custom_constraint: nova.keypair
 
     # key_pair:
     #     type: string
@@ -86,12 +86,12 @@ resources:
         properties:
             name: CC_Security
             rules:
-                - protocol: icmp
-                - protocol: tcp
+                protocol: icmp
+                protocol: tcp
                 port_range_min: 22
                 port_range_max: 22
-                - protocol: icmp
-                - protocol: tcp
+                protocol: icmp
+                protocol: tcp
                 port_range_min: 80
                 port_range_max: 80
 
@@ -154,8 +154,7 @@ resources:
             image: ubuntu-16.04
             name: {get_param : serverName}
             networks: [{subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
-            security_groups: 
-                - { get_resource: CC_Security }
+            security_groups: { get_resource: CC_Security }
                 
 
     cc_BackendGroup:
@@ -171,8 +170,7 @@ resources:
                     image: ubuntu-16.04
                     name: {get_param : serverName}
                     networks: [{subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
-                    security_groups: 
-                        - { get_resource: CC_Security }
+                    security_groups: { get_resource: CC_Security }
           
 
 
