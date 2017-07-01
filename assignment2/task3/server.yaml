@@ -106,9 +106,9 @@ resources:
             name: { get_param: subnet }
             network: { get_resource: CC_Network }
             cidr: 10.12.1.0/24
-            allocation_pools: [ {
-                start: 10.12.1.1,
-                end: 10.12.1.254 } ]
+            allocation_pools: 
+                - start: 10.12.1.1
+                  end: 10.12.1.254
 
       
     CC_Router:
@@ -157,7 +157,8 @@ resources:
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
             name: {get_param : server}
-            networks: [{subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
+            #networks: [subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
+            network: {get_param: network}
             security_groups: { get_resource: CC_Security }
                 
 
@@ -173,7 +174,8 @@ resources:
                     availability_zone: Cloud Computing 2017
                     image: ubuntu-16.04
                     name: {get_param : server}
-                    networks: [{subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
+                    network: {get_param: network}
+                    #networks: [subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
                     security_groups: { get_resource: CC_Security }
           
 
@@ -214,4 +216,4 @@ outputs:
     #     value: { get_resource: port }
     floating_ip:
         description: The floating_ip
-        value: { get_attr: [floating_ip, floating_ip_address] }
+        value: { get_attr: [CC_Floating_ip, floating_ip_address] }

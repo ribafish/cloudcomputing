@@ -37,8 +37,8 @@ parameters:
         label: Security Group(s)
         default: default
 
-    networks:
-        type: comma_delimited_list
+    network:
+        type: string
         description: networks for the instances
 
 resources:
@@ -51,6 +51,6 @@ resources:
             availability_zone: { get_param: availability_zone}
             image: {get_param: image}
             name: {get_param : name}
-            networks: { get_param: networks }
-            #networks: [{"subnet": {get_resource: CC_Subnet}, "floating_ip": String, "port_extra_properties": {"mac_address": String, "admin_state_up": Boolean, "qos_policy": String, "value_specs": {...}, "port_security_enabled": Boolean, "allowed_address_pairs": [{"ip_address": String, "mac_address": String}, {"ip_address": String, "mac_address": String}, ...], "binding:vnic_type": String}, "fixed_ip": String, "network": String, "port": String, "allocate_network": String, "uuid": String}]
+            networks: 
+                - network: { get_param: network }
             security_groups: { get_param: security_groups}
