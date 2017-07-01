@@ -157,7 +157,7 @@ resources:
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
             name: {get_param : server}
-            networks: [{subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
+            networks: [{subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, port: {get_resource: CC_Port}}]
             security_groups: { get_resource: CC_Security }
                 
 
@@ -173,12 +173,9 @@ resources:
                     availability_zone: Cloud Computing 2017
                     image: ubuntu-16.04
                     name: {get_param : server}
-                    networks: [{subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
+                    networks: [{subnet: {get_resource: CC_Subnet}, port: {get_resource: CC_Port}}]
                     security_groups: { get_resource: CC_Security }
           
-
-
-  
 
     # This port is a separate resource used to assign the security groups
     # to the VM. Can also be used to attach a OS::Neutron::FloatingIP to the VM.
