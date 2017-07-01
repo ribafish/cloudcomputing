@@ -152,7 +152,7 @@ resources:
     CC_Frontend:
         type: serverTemplate.yaml
         properties:
-            key_name: {get_param: key_pair}
+            key_pair: { get_param: key_pair }
             flavor: Cloud Computing
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
@@ -168,7 +168,7 @@ resources:
             resource_def:
                 type: serverTemplate.yaml
                 properties:
-                    key_name: {get_param: key_pair}
+                    key_pair: { get_param: key_pair }
                     flavor: Cloud Computing
                     availability_zone: Cloud Computing 2017
                     image: ubuntu-16.04
