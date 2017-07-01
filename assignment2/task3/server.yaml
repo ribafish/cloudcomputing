@@ -85,15 +85,15 @@ resources:
         type: OS::Neutron::SecurityGroup
         properties:
             name: CC_Security
-            rules:
-                protocol: icmp
-                protocol: tcp
-                port_range_min: 22
-                port_range_max: 22
-                protocol: icmp
-                protocol: tcp
-                port_range_min: 80
-                port_range_max: 80
+            rules: [ {
+                protocol: icmp,
+                protocol: tcp,
+                port_range_min: 22,
+                port_range_max: 22},
+                {protocol: icmp,
+                protocol: tcp,
+                port_range_min: 80,
+                port_range_max: 80}]
 
     CC_Network : 
         type : OS::Neutron::Net
