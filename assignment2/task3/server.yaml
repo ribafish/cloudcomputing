@@ -104,7 +104,7 @@ resources:
         type: OS::Neutron::Subnet
         properties:
             name: { get_param: subnet }
-            network: CC_Network
+            network: { get_resource: CC_Network }
       
     CC_Router:
         type: OS::Neutron::Router
