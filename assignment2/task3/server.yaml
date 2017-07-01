@@ -27,7 +27,7 @@ parameters:
         type: string
         label: Key Pair
         constraints:
-            custom_constraint: nova.keypair
+            - custom_constraint: nova.keypair
 
     # key_pair:
     #     type: string
