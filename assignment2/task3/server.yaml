@@ -112,7 +112,7 @@ resources:
         description: Private subnet
         properties:
             name: { get_param: subnet }
-            network: { get_resource: CC_Network }
+            network_id: { get_resource: CC_Network }
             cidr: 10.12.2.0/24
             allocation_pools: 
                 - start: 10.12.2.2
