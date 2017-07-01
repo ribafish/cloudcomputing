@@ -1,5 +1,5 @@
 heat_template_version: 2015-10-15
-description: One VM instance
+description: Three VM instances
 
 parameters:
 
@@ -138,14 +138,13 @@ resources:
     CC_Port:
         type: OS::Neutron::Port
         properties:
-            network: { get_resource: CC_Network }
+            network_id: { get_resource: CC_Network }
             name:
                 str_replace:
                     template: port-VM_NAME
                     params:
                         VM_NAME: { get_param: name }
             security_groups: [{get_resource: CC_Security}]
-
             fixed_ips:
                 - subnet_id: { get_resource: CC_Subnet }
 
@@ -155,14 +154,9 @@ resources:
         description: External floating ip
         properties:
             floating_network: { get_param: network_public }
-
-
-    CC_Floating_ip_assoc:
-        type: OS::Neutron::FloatingIPAssociation
-        properties:
-            floatingip_id: { get_resource: CC_Floating_ip }
             port_id: { get_resource: CC_Port }
-    
+
+
     CC_Frontend:
         type: serverTemplate.yaml
         properties:
@@ -170,9 +164,15 @@ resources:
             flavor: Cloud Computing
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
-            name: {get_param : server}
+            name: 
+                str_replace:
+                    template: $srv-Front
+                    params: 
+                        $srv: {get_param : server}
             #networks: [subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
-            network: {get_param: network}
+            networks: [{get_param: network}]
+            ports: [{get_resource: CC_Port}]
+            subnets: [{get_resource: CC_Subnet}]
             security_groups: [{ get_resource: CC_Security }]
                 
 
@@ -187,8 +187,13 @@ resources:
                     flavor: Cloud Computing
                     availability_zone: Cloud Computing 2017
                     image: ubuntu-16.04
-                    name: {get_param : server}
-                    network: {get_param: network}
+                    name: 
+                        str_replace:
+                            template: $srv-Back-%index%
+                            params: 
+                                $srv: {get_param : server}
+                    networks: [{get_param: network}]
+                    subnets: [{get_resource: CC_Subnet}]
                     #networks: [subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
                     security_groups: [{ get_resource: CC_Security }]
           
@@ -228,3 +233,6 @@ outputs:
     floating_ip:
         description: The floating_ip
         value: { get_attr: [CC_Floating_ip, floating_ip_address] }
+    front_networks:
+        description: frontend networks
+        value: { get_attr: [CC_Frontend, networks_out]}

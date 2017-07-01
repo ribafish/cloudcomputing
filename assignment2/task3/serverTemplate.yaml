@@ -37,9 +37,20 @@ parameters:
         label: Security Group(s)
         default: default
 
-    network:
-        type: string
+    networks:
+        type: comma_delimited_list
         description: networks for the instances
+        default: []
+
+    subnets:
+        type: comma_delimited_list
+        description: subnets for the instance
+        default: []
+
+    ports:
+        type: comma_delimited_list
+        description: ports for the instance
+        default: []
 
 resources:
 
@@ -51,6 +62,27 @@ resources:
             availability_zone: { get_param: availability_zone}
             image: {get_param: image}
             name: {get_param : name}
-            networks: 
-                - network: { get_param: network }
             security_groups: { get_param: security_groups}
+            networks: 
+                repeat:
+                  for_each:
+                    <%port%>: { get_param: ports }
+                  template:
+                    port: <%port%>
+            networks: 
+                repeat:
+                  for_each:
+                    <%network%>: { get_param: networks }
+                  template:
+                    network: <%network%>
+            networks: 
+                repeat:
+                  for_each:
+                    <%subnet%>: { get_param: subnets }
+                  template:
+                    subnet: <%subnet%>                    
+
+outputs:
+    networks_out:
+        description: vm networks
+        value: { get_attr: [Servertemplate, networks]}
