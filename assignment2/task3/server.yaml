@@ -105,10 +105,10 @@ resources:
         properties:
             name: { get_param: subnet }
             network: { get_resource: CC_Network }
-            cidr: 10.12.1.0/24
+            cidr: 10.12.2.0/24
             allocation_pools: 
-                - start: 10.12.1.1
-                  end: 10.12.1.254
+                - start: 10.12.2.2
+                  end: 10.12.2.254
 
       
     CC_Router:
@@ -159,7 +159,7 @@ resources:
             name: {get_param : server}
             #networks: [subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
             network: {get_param: network}
-            security_groups: { get_resource: CC_Security }
+            security_groups: [{ get_resource: CC_Security }]
                 
 
     cc_BackendGroup:
@@ -176,7 +176,7 @@ resources:
                     name: {get_param : server}
                     network: {get_param: network}
                     #networks: [subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}]
-                    security_groups: { get_resource: CC_Security }
+                    security_groups: [{ get_resource: CC_Security }]
           
 
     # This port is a separate resource used to assign the security groups
