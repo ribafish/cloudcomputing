@@ -115,9 +115,8 @@ resources:
         type: OS::Neutron::Router
         properties:
             name: { get_param: router }
-            external_gateway_info:
-                network: { get_resource: CC_Network }
-           
+            external_gateway_info: { network: private }
+                
 
     CC_Router-interface:
         type: OS::Neutron::RouterInterface
