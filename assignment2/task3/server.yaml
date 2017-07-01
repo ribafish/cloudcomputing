@@ -179,9 +179,6 @@ resources:
                     security_groups: { get_resource: CC_Security }
           
 
-
-  
-
     # This port is a separate resource used to assign the security groups
     # to the VM. Can also be used to attach a OS::Neutron::FloatingIP to the VM.
     # port:
