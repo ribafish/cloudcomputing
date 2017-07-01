@@ -7,23 +7,23 @@ parameters:
         type: string
         label: Name of the VM
 
-    routerName:
+    router:
         type: string
         label: Name of the Router    
 
-    serverName:
+    server:
         type: string
         label: Name of the Server
 
-    networkName:
+    network:
         type: string
         label: Name of the Network
 
-    subnetName:
+    subnet:
         type: string
         label: Name of the Subnet
 
-    CC_key_pair:
+    key_pair:
         type: string
         label: Key Pair
         constraints:
@@ -98,18 +98,18 @@ resources:
     CC_Network : 
         type : OS::Neutron::Net
         properties : 
-            name : { get_param: networkName }
+            name : { get_param: network }
 
     CC_Subnet:
         type: OS::Neutron::Subnet
         properties:
-            name: { get_param: subnetName }
+            name: { get_param: subnet }
             network: CC_Network
       
     CC_Router:
         type: OS::Neutron::Router
         properties:
-            name: { get_param: routerName }
+            name: { get_param: router }
             external_gateway_info:
                 network: { get_resource: CC_Network }
            
@@ -148,11 +148,11 @@ resources:
     CC_Frontend:
         type: serverTemplate.yaml
         properties:
-            key_name: {get_param: CC_key_pair}
+            key_name: {get_param: key_pair}
             flavor: Cloud Computing
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
-            name: {get_param : serverName}
+            name: {get_param : server}
             networks: [{subnet: {get_resource: CC_Subnet}, floating_ip: {get_resource: CC_Floating_ip}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
             security_groups: { get_resource: CC_Security }
                 
@@ -164,11 +164,11 @@ resources:
             resource_def:
                 type: serverTemplate.yaml
                 properties:
-                    key_name: {get_param: CC_key_pair}
+                    key_name: {get_param: key_pair}
                     flavor: Cloud Computing
                     availability_zone: Cloud Computing 2017
                     image: ubuntu-16.04
-                    name: {get_param : serverName}
+                    name: {get_param : server}
                     networks: [{subnet: {get_resource: CC_Subnet}, network: {get_resource: CC_Network}, port: {get_resource: CC_Port}}]
                     security_groups: { get_resource: CC_Security }
           
