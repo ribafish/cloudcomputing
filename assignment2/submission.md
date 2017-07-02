@@ -609,6 +609,7 @@ Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
 Last login: Sun Jul  2 03:41:40 2017 from 130.149.212.179
 To run a command as administrator (user "root"), use "sudo <command>".
 See "man sudo_root" for details.
+
 ubuntu@cc17-23-server-front:~$ ping google.com
 PING google.com (172.217.17.142) 56(84) bytes of data.
 64 bytes from ams15s30-in-f14.1e100.net (172.217.17.142): icmp_seq=1 ttl=56 time=15.1 ms
