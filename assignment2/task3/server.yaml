@@ -64,9 +64,6 @@ resources:
             image: {get_param: image}
             name: {get_param : name}
             admin_user: ubuntu
-            # if I define more than one network connection (to the same network at least) it will for some reason use just one port, not both 
-            # networks:  [{port: { get_param: port }, port: {get_resource: backend_port} }]
-            # networks:  [{port: { get_param: port }}]    # outside port
             networks:  [{port: {get_resource: server_port} }]              
 
 outputs:

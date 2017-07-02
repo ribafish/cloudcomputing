@@ -77,8 +77,8 @@ resources:
     http_security:
         type: OS::Neutron::SecurityGroup
         properties:
-            name: ssh_ping_security
-            description: Ping and SSH
+            name: http_security
+            description: HTTP
             rules:
                 - protocol: icmp
                 - protocol: tcp

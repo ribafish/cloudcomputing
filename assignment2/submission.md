@@ -1,6 +1,16 @@
-# Task 1: Cloud Benchmark
+# Cloud Computing Assignment 2
 
-## Prerequisites
+**Group 06:**
+
+* Gasper Kojek
+* Jens Klein
+* Leo Li
+* Jinhu
+* Tongli
+
+## Task 1: Cloud Benchmark
+
+### Prerequisites
 
 Install dependencies and Rally
 
@@ -14,7 +24,7 @@ $ sudo apt-get install libssl-dev libffi-dev python-dev libxml2-dev libxslt1-dev
 $ wget -q -O-https://raw.githubusercontent.com/openstack/rally/master/install_rally.sh | bash
 ```
 
-## Deploy Rally
+### Deploy Rally
 
 ```shell
 # enable Rally virtual environment
@@ -54,7 +64,7 @@ Check quota of Openstack project
 
 ![quota check](./images/quota.png)
 
-## Run Benchmark
+### Run Benchmark
 
 ```shell
 # Run benchmark for scenario "Querying the list of your VMs"
@@ -70,9 +80,9 @@ $ rally task report 525de43c-c7fc-4b99-8572-4d274fbd4c72 --out boot-and-delete_o
 
 (If a task is executed in different time, its id will change)
 
-## Benchmark Scripts and Descriptions
+### Benchmark Scripts and Descriptions
 
-###  For scenario "Querying the list of your VMs" 
+####  For scenario "Querying the list of your VMs" 
 
 boot-and-list.json
 
@@ -107,7 +117,7 @@ This benchmark is to boot a server from an image and then list all servers.
 }
 ```
 
-###  For scenario "Creation time of VMs"
+####  For scenario "Creation time of VMs"
 
 'boot-and-delete.json'
 
@@ -160,9 +170,9 @@ This benchmark has several atomic actions, namely boot VM and delete VM.  Inside
 }
 ```
 
-## Benchmark Results
+### Benchmark Results
 
-### For scenario "Querying the list of your VMs"
+#### For scenario "Querying the list of your VMs"
 
 Morning at 11:30
 
@@ -184,7 +194,7 @@ Night at 20:30
 
 In morning and evening, it will take more time to boot a server from a images, more than 14 seconds in the morning and evening, in the afternoon is less than 12 seconds. The time for listing server is always less than 0.2 seconds, but in the morning it will take a little more.
 
-### For scenario "Creation time of VMs"
+#### For scenario "Creation time of VMs"
 
 Morning at 11:30
 
@@ -200,15 +210,15 @@ Night at 20:30
 
 From these three graphs, time for booting server is around 15 seconds, delete servers takes about 4 to 6 seconds. 
 
-#  Task 2: Introducing Heat
+##  Task 2: Introducing Heat
 
-## Prerequisites
+### Prerequisites
 
 - access to CIT Cloud (see previous assignment)
 - open VPN connection to TU
 
 
-## Creation script
+### Creation script
 
 In order to keep cli commands short we put the openstack cli command in a shell script - `create-stack.sh`:
 
@@ -222,7 +232,7 @@ openstack stack create -t material/server.yml assignment2-task2-stack \
 --parameter "network=cc17-net"
 ```
 
-## Executing the heat client script
+### Executing the heat client script
 
 Just run: 
 
@@ -230,15 +240,15 @@ Just run:
 ./create-stack.sh
 ```
 
-## Test if successful
+### Test if successful
 
-### Assign floating IP address
+#### Assign floating IP address
 
 ```
 openstack server add floating ip assignment2-task2-vm 10.200.2.251
 ```
 
-### SSH into instance
+#### SSH into instance
 
 ```
 ssh -i ~/.ssh/open_stack ubuntu@10.200.2.251
@@ -246,7 +256,7 @@ ssh -i ~/.ssh/open_stack ubuntu@10.200.2.251
 
 where `~/.ssh/open_stack` is the private key of the assigned key pair
 
-### From the instance check internet connectivity with ping
+#### From the instance check internet connectivity with ping
 
 ```
 ping google.de
@@ -265,7 +275,7 @@ rtt min/avg/max/mdev = 15.633/15.633/15.633/0.000 ms
 
 "1 packets transmitted" - Indicating we can reach googles server.
 
-## Delete Stack
+### Delete Stack
 
 Delete stack via CLI:
 
@@ -289,3 +299,281 @@ Output:
 +-------------------------+-----------------+
 ```
 
+## Task 3: Advanced Heat templates
+
+### Template files
+
+#### Creation script
+In order to keep cli commands short we put the openstack cli command in a shell script  `create-stack3.sh`:
+
+```
+openstack stack create -t server-landscape.yaml assignment2-task3-stack \
+--parameter "name=assignment2-task3-vm" \
+--parameter "router=cc17-23-router" \
+--parameter "server=cc17-23-server" \
+--parameter "network=cc17-23-net"	\
+--parameter "subnet=cc17-23-subnet" \
+--parameter "key_pair=group06key" \
+--parameter "network_public=tu-internal"
+```
+
+#### Top heat file
+
+ `server-landscape.yaml`:
+ 
+ ```
+ heat_template_version: 2015-10-15
+description: Three VM instances
+
+parameters:
+
+    name:
+        type: string
+        label: Name of the VM
+
+    router:
+        type: string
+        label: Name of the Router    
+
+    server:
+        type: string
+        label: Name of the Server
+
+    network:
+        type: string
+        label: Name of the Network
+
+    subnet:
+        type: string
+        label: Name of the Subnet
+
+    key_pair:
+        type: string
+        label: Key Pair
+        constraints:
+            - custom_constraint: nova.keypair
+
+    network_public:
+        type: string
+        label: Network
+        constraints:
+            - custom_constraint: neutron.network
+
+    backend_servers:
+        type: string
+        label: Number of backend servers
+        default: 2
+
+resources:
+
+    private_net : 
+        type : OS::Neutron::Net
+        description: Private network
+        properties : 
+            name : { get_param: network }
+
+    private_subnet:
+        type: OS::Neutron::Subnet
+        description: Private subnet
+        properties:
+            name: { get_param: subnet }
+            network_id: { get_resource: private_net }
+            cidr: 10.12.2.0/24
+            allocation_pools: 
+                - start: 10.12.2.2
+                  end: 10.12.2.254
+
+    ssh_ping_security:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: ssh_ping_security
+            description: Ping and SSH
+            rules:
+                - protocol: icmp
+                - protocol: tcp
+                  remote_ip_prefix: 0.0.0.0/0
+                  port_range_min: 22
+                  port_range_max: 22
+                - protocol: tcp
+                  port_range_min: 5000
+                  port_range_max: 5000
+
+    http_security:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: http_security
+            description: HTTP
+            rules:
+                - protocol: icmp
+                - protocol: tcp
+                  remote_ip_prefix: 0.0.0.0/0
+                  port_range_min: 80
+                  port_range_max: 80
+
+      
+    router1:
+        type: OS::Neutron::Router
+        description: External router
+        properties:
+            name: { get_param: router }
+            external_gateway_info:
+                network: { get_param: network_public }
+           
+
+    router1_interface:
+        type: OS::Neutron::RouterInterface
+        description: Interface between external router and private subnet
+        properties:
+            router_id: { get_resource: router1 }
+            subnet: { get_resource: private_subnet }
+
+
+    frontend_floating_ip:
+        type: OS::Neutron::FloatingIP
+        description: External floating ip
+        properties:
+            floating_network: { get_param: network_public }
+            port_id: { get_attr: [frontend, port] }
+
+
+    frontend:
+        type: server.yaml
+        properties:
+            key_pair: { get_param: key_pair }
+            flavor: Cloud Computing
+            availability_zone: Cloud Computing 2017
+            image: ubuntu-16.04
+            security_groups: [{get_resource: ssh_ping_security}, {get_resource: http_security}]
+            private_net: { get_resource: private_net }
+            name: 
+                str_replace:
+                    template: $srv-Front
+                    params: 
+                        $srv: {get_param : server}
+            subnet: {get_resource: private_subnet }              
+
+    backedGroup:
+        type: OS::Heat::ResourceGroup
+        properties:
+            count: { get_param: backend_servers}
+            resource_def:
+                type: server.yaml
+                properties:
+                    key_pair: { get_param: key_pair }
+                    flavor: Cloud Computing
+                    availability_zone: Cloud Computing 2017
+                    image: ubuntu-16.04
+                    security_groups: [{ get_resource: ssh_ping_security }] 
+                    private_net: { get_resource: private_net }
+                    name: 
+                        str_replace:
+                            template: $srv-Back-%index%
+                            params: 
+                                $srv: {get_param : server}
+                    subnet: {get_resource: private_subnet }
+        
+
+outputs:
+    floating_ip:
+        description: The floating ip
+        value: { get_attr: [frontend_floating_ip, floating_ip_address] }
+
+ ```
+  
+ #### Nested stack heat template
+ 
+ `server.yaml`:
+ 
+ ```
+	heat_template_version: 2015-10-15
+	description: Server template
+
+	parameters:
+
+	    flavor:
+		type: string
+		label: Flavor
+		constraints:
+		    - custom_constraint: nova.flavor
+
+	    availability_zone: 
+		type: string
+		label: Availability Zone
+		default: Default
+
+
+	    image:	
+		type: string
+		label: Image Name
+		constraints:
+		    - custom_constraint: glance.image
+
+	    name:
+		type: string
+		label: Name of the Server
+	    
+
+	    key_pair:
+		type: string
+		label: Key Pair
+		constraints:
+		    - custom_constraint: nova.keypair
+
+	    security_groups: 
+		type: comma_delimited_list 
+		label: Security Group(s) 
+		default: [default]
+
+	    private_net:
+		type: string
+
+	    subnet:
+		type: string
+		description: subnet for the instance
+
+	resources:
+
+	    server_port:
+		type: OS::Neutron::Port
+		properties:
+		    name: backend_port
+		    network_id: { get_param: private_net }
+		    security_groups: {get_param: security_groups}
+		    fixed_ips:
+		        - subnet_id: {get_param: subnet} 
+
+	    Servertemplate:
+		type: OS::Nova::Server
+		properties:
+		    flavor: {get_param: flavor}
+		    key_name: { get_param: key_pair}
+		    availability_zone: { get_param: availability_zone}
+		    image: {get_param: image}
+		    name: {get_param : name}
+		    admin_user: ubuntu
+		    networks:  [{port: {get_resource: server_port} }]              
+
+	outputs:
+	    port:
+		description: port
+		value: { get_resource: server_port }
+ ```
+ 
+ ### Commands used
+ 
+ #### Create stack
+ 
+ ```
+ $ ./create-stack3.sh 
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| id                  | fdc915a8-2730-420c-88f4-29d00744d42d |
+| stack_name          | assignment2-task3-stack              |
+| description         | Three VM instances                   |
+| creation_time       | 2017-07-02T03:51:58                  |
+| updated_time        | None                                 |
+| stack_status        | CREATE_IN_PROGRESS                   |
+| stack_status_reason |                                      |
++---------------------+--------------------------------------+
+```
