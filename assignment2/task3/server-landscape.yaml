@@ -1,0 +1,155 @@
+heat_template_version: 2015-10-15
+description: Three VM instances
+
+parameters:
+
+    name:
+        type: string
+        label: Name of the VM
+
+    router:
+        type: string
+        label: Name of the Router    
+
+    server:
+        type: string
+        label: Name of the Server
+
+    network:
+        type: string
+        label: Name of the Network
+
+    subnet:
+        type: string
+        label: Name of the Subnet
+
+    key_pair:
+        type: string
+        label: Key Pair
+        constraints:
+            - custom_constraint: nova.keypair
+
+    network_public:
+        type: string
+        label: Network
+        constraints:
+            - custom_constraint: neutron.network
+
+    backend_servers:
+        type: string
+        label: Number of backend servers
+        default: 2
+
+resources:
+
+    private_net : 
+        type : OS::Neutron::Net
+        description: Private network
+        properties : 
+            name : { get_param: network }
+
+    private_subnet:
+        type: OS::Neutron::Subnet
+        description: Private subnet
+        properties:
+            name: { get_param: subnet }
+            network_id: { get_resource: private_net }
+            cidr: 10.12.2.0/24
+            allocation_pools: 
+                - start: 10.12.2.2
+                  end: 10.12.2.254
+
+    ssh_ping_security:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: ssh_ping_security
+            description: Ping and SSH
+            rules:
+                - protocol: icmp
+                - protocol: tcp
+                  remote_ip_prefix: 0.0.0.0/0
+                  port_range_min: 22
+                  port_range_max: 22
+                - protocol: tcp
+                  port_range_min: 5000
+                  port_range_max: 5000
+
+    http_security:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            name: ssh_ping_security
+            description: Ping and SSH
+            rules:
+                - protocol: icmp
+                - protocol: tcp
+                  remote_ip_prefix: 0.0.0.0/0
+                  port_range_min: 80
+                  port_range_max: 80
+
+      
+    router1:
+        type: OS::Neutron::Router
+        description: External router
+        properties:
+            name: { get_param: router }
+            external_gateway_info:
+                network: { get_param: network_public }
+           
+
+    router1_interface:
+        type: OS::Neutron::RouterInterface
+        description: Interface between external router and private subnet
+        properties:
+            router_id: { get_resource: router1 }
+            subnet: { get_resource: private_subnet }
+
+
+    frontend_floating_ip:
+        type: OS::Neutron::FloatingIP
+        description: External floating ip
+        properties:
+            floating_network: { get_param: network_public }
+            port_id: { get_attr: [frontend, port] }
+
+
+    frontend:
+        type: server.yaml
+        properties:
+            key_pair: { get_param: key_pair }
+            flavor: Cloud Computing
+            availability_zone: Cloud Computing 2017
+            image: ubuntu-16.04
+            security_groups: [{get_resource: ssh_ping_security}, {get_resource: http_security}]
+            private_net: { get_resource: private_net }
+            name: 
+                str_replace:
+                    template: $srv-Front
+                    params: 
+                        $srv: {get_param : server}
+            subnet: {get_resource: private_subnet }              
+
+    backedGroup:
+        type: OS::Heat::ResourceGroup
+        properties:
+            count: { get_param: backend_servers}
+            resource_def:
+                type: server.yaml
+                properties:
+                    key_pair: { get_param: key_pair }
+                    flavor: Cloud Computing
+                    availability_zone: Cloud Computing 2017
+                    image: ubuntu-16.04
+                    security_groups: [{ get_resource: ssh_ping_security }] 
+                    private_net: { get_resource: private_net }
+                    name: 
+                        str_replace:
+                            template: $srv-Back-%index%
+                            params: 
+                                $srv: {get_param : server}
+                    subnet: {get_resource: private_subnet }
+        
+
+outputs:
+    floating_ip:
+        description: The floating ip
+        value: { get_attr: [frontend_floating_ip, floating_ip_address] }
