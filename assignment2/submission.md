@@ -5,8 +5,8 @@
 * Gasper Kojek
 * Jens Klein
 * Leo Li
-* Jinhu
-* Tongli
+* Jin Hu
+* Tong Li
 
 ## Task 1: Cloud Benchmark
 
@@ -29,6 +29,9 @@ $ wget -q -O-https://raw.githubusercontent.com/openstack/rally/master/install_ra
 ```shell
 # enable Rally virtual environment
 $ . /home/ubuntu/rally/bin/activate
+
+# setup Rally database
+$ rally-manage db recreate
 
 # provide Rally with an OpenStack deployment it is going to benchmark
 $ . cc17-group06-openrc.sh
@@ -320,8 +323,8 @@ openstack stack create -t server-landscape.yaml assignment2-task3-stack \
 #### Top heat file
 
  `server-landscape.yaml`:
- 
- ```yaml
+
+```yaml
  heat_template_version: 2015-10-15
 description: Three VM instances
 
@@ -478,13 +481,13 @@ outputs:
         description: The floating ip
         value: { get_attr: [frontend_floating_ip, floating_ip_address] }
 
- ```
-  
+```
+
  #### Nested stack heat template
- 
+
  `server.yaml`:
- 
- ```yaml
+
+```yaml
 	heat_template_version: 2015-10-15
 	description: Server template
 
@@ -557,13 +560,13 @@ outputs:
 	    port:
 		description: port
 		value: { get_resource: server_port }
- ```
- 
+```
+
  ### Commands used
- 
+
  #### Create stack
- 
- ```shell
+
+```shell
  $ ./create-stack3.sh 
 +---------------------+--------------------------------------+
 | Field               | Value                                |
