@@ -577,3 +577,92 @@ outputs:
 | stack_status_reason |                                      |
 +---------------------+--------------------------------------+
 ```
+
+#### Extract the `floating_ip` variable
+
+```
+$ openstack stack output show --all assignment2-task3-stack
++-------------+------------------------------------+
+| Field       | Value                              |
++-------------+------------------------------------+
+| floating_ip | {                                  |
+|             |   "output_value": "10.200.2.33",   |
+|             |   "output_key": "floating_ip",     |
+|             |   "description": "The floating ip" |
+|             | }                                  |
++-------------+------------------------------------+
+```
+
+#### Test the created VMs
+
+* ssh into Frontend and ping google to test internet connection
+
+```
+$ ssh -i group06key.key ubuntu@10.200.2.31
+Enter passphrase for key 'group06key.key': 
+Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+ * Documentation:  https://help.ubuntu.com/
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+0 packages can be updated.
+0 updates are security updates.
+Last login: Sun Jul  2 03:41:40 2017 from 130.149.212.179
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+ubuntu@cc17-23-server-front:~$ ping google.com
+PING google.com (172.217.17.142) 56(84) bytes of data.
+64 bytes from ams15s30-in-f14.1e100.net (172.217.17.142): icmp_seq=1 ttl=56 time=15.1 ms
+^C
+--- google.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 15.114/15.114/15.114/0.000 ms
+```
+
+* copy our ssh key file to frontend from separate terminal
+
+```
+$ scp -i group06key.key group06key.key  ubuntu@10.200.2.33:~
+Enter passphrase for key 'group06key.key': 
+group06key.key                                                                                            100% 1766     1.7KB/s   00:00    
+```
+
+* ssh from frontend to backend servers and test internet connection from backend (same on both, shown only for first)
+
+```
+ubuntu@cc17-23-server-front:~$ ssh -i group06key.key ubuntu@10.12.2.4
+The authenticity of host '10.12.2.4 (10.12.2.4)' can't be established.
+ECDSA key fingerprint is SHA256:9JvnmM1l5llzQ6NZSbry0XMh8lHG25SI57Eddn9LhJw.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.12.2.4' (ECDSA) to the list of known hosts.
+Enter passphrase for key 'group06key.key': 
+Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+0 packages can be updated.
+0 updates are security updates.
+
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+ubuntu@cc17-23-server-back-1:~$ ping google.com
+PING google.com (172.217.17.142) 56(84) bytes of data.
+64 bytes from ams15s30-in-f142.1e100.net (172.217.17.142): icmp_seq=1 ttl=56 time=15.2 ms
+64 bytes from ams15s30-in-f142.1e100.net (172.217.17.142): icmp_seq=2 ttl=56 time=15.2 ms
+^C
+--- google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 15.206/15.232/15.259/0.126 ms
+```
