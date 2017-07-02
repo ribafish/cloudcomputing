@@ -306,7 +306,7 @@ Output:
 #### Creation script
 In order to keep cli commands short we put the openstack cli command in a shell script  `create-stack3.sh`:
 
-```
+```shell
 openstack stack create -t server-landscape.yaml assignment2-task3-stack \
 --parameter "name=assignment2-task3-vm" \
 --parameter "router=cc17-23-router" \
@@ -321,7 +321,7 @@ openstack stack create -t server-landscape.yaml assignment2-task3-stack \
 
  `server-landscape.yaml`:
  
- ```
+ ```yaml
  heat_template_version: 2015-10-15
 description: Three VM instances
 
@@ -484,7 +484,7 @@ outputs:
  
  `server.yaml`:
  
- ```
+ ```yaml
 	heat_template_version: 2015-10-15
 	description: Server template
 
@@ -563,7 +563,7 @@ outputs:
  
  #### Create stack
  
- ```
+ ```shell
  $ ./create-stack3.sh 
 +---------------------+--------------------------------------+
 | Field               | Value                                |
@@ -580,7 +580,7 @@ outputs:
 
 #### Extract the `floating_ip` variable
 
-```
+```shell
 $ openstack stack output show --all assignment2-task3-stack
 +-------------+------------------------------------+
 | Field       | Value                              |
@@ -597,7 +597,7 @@ $ openstack stack output show --all assignment2-task3-stack
 
 * ssh into Frontend and ping google to test internet connection
 
-```
+```shell
 $ ssh -i group06key.key ubuntu@10.200.2.31
 Enter passphrase for key 'group06key.key': 
 Welcome to Ubuntu 16.04 LTS (GNU/Linux 4.4.0-22-generic x86_64)
@@ -621,7 +621,7 @@ rtt min/avg/max/mdev = 15.114/15.114/15.114/0.000 ms
 
 * copy our ssh key file to frontend from separate terminal
 
-```
+```shell
 $ scp -i group06key.key group06key.key  ubuntu@10.200.2.33:~
 Enter passphrase for key 'group06key.key': 
 group06key.key        100% 1766     1.7KB/s   00:00    
@@ -629,7 +629,7 @@ group06key.key        100% 1766     1.7KB/s   00:00
 
 * ssh from frontend to backend servers and test internet connection from backend (same on both, shown only for first)
 
-```
+```shell
 ubuntu@cc17-23-server-front:~$ ssh -i group06key.key ubuntu@10.12.2.4
 The authenticity of host '10.12.2.4 (10.12.2.4)' can't be established.
 ECDSA key fingerprint is SHA256:9JvnmM1l5llzQ6NZSbry0XMh8lHG25SI57Eddn9LhJw.
