@@ -99,5 +99,7 @@ resources:
           image: ubuntu-16.04
           key_name:  group06key
           admin_user: ubuntu
-          networks:
-                - port: { get_resource: server1_port }
+        #either networks declaration works:
+          # networks:
+          #       - port: { get_resource: server1_port }
+          networks: [ {subnet: { get_resource: private_subnet }}]

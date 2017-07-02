@@ -32,27 +32,31 @@ parameters:
         constraints:
             - custom_constraint: nova.keypair
 
-    security_groups:
-        type: comma_delimited_list
-        label: Security Group(s)
-        default: default
+    security_groups: 
+        type: comma_delimited_list 
+        label: Security Group(s) 
+        default: [default]
 
-    networks:
-        type: comma_delimited_list
-        description: networks for the instances
-        default: []
+    private_net:
+        type: string
 
-    subnets:
-        type: comma_delimited_list
-        description: subnets for the instance
-        default: []
+    subnet:
+        type: string
+        description: subnet for the instance
 
-    ports:
-        type: comma_delimited_list
-        description: ports for the instance
-        default: []
+    port:
+        type: string
 
 resources:
+
+    # backend_port:
+    #     type: OS::Neutron::Port
+    #     properties:
+    #         name: backend_port
+    #         network_id: { get_param: private_net }
+    #         security_groups: {get_param: security_groups}
+    #         fixed_ips:
+    #             - subnet_id: {get_param: subnet}    
 
     Servertemplate:
         type: OS::Nova::Server
@@ -62,25 +66,10 @@ resources:
             availability_zone: { get_param: availability_zone}
             image: {get_param: image}
             name: {get_param : name}
-            security_groups: { get_param: security_groups}
-            networks: 
-                repeat:
-                  for_each:
-                    <%port%>: { get_param: ports }
-                  template:
-                    port: <%port%>
-            networks: 
-                repeat:
-                  for_each:
-                    <%network%>: { get_param: networks }
-                  template:
-                    network: <%network%>
-            networks: 
-                repeat:
-                  for_each:
-                    <%subnet%>: { get_param: subnets }
-                  template:
-                    subnet: <%subnet%>                    
+            admin_user: ubuntu
+            # if I define more than one network connection (to the same network at least) it will for some reason use just one port, not both 
+            # networks:  [{port: { get_param: port }, port: {get_resource: backend_port} }]
+            networks:  [{port: { get_param: port }}]                
 
 outputs:
     networks_out:
