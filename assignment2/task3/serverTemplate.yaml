@@ -44,19 +44,16 @@ parameters:
         type: string
         description: subnet for the instance
 
-    port:
-        type: string
-
 resources:
 
-    # backend_port:
-    #     type: OS::Neutron::Port
-    #     properties:
-    #         name: backend_port
-    #         network_id: { get_param: private_net }
-    #         security_groups: {get_param: security_groups}
-    #         fixed_ips:
-    #             - subnet_id: {get_param: subnet}    
+    server_port:
+        type: OS::Neutron::Port
+        properties:
+            name: backend_port
+            network_id: { get_param: private_net }
+            security_groups: {get_param: security_groups}
+            fixed_ips:
+                - subnet_id: {get_param: subnet}    
 
     Servertemplate:
         type: OS::Nova::Server
@@ -69,9 +66,10 @@ resources:
             admin_user: ubuntu
             # if I define more than one network connection (to the same network at least) it will for some reason use just one port, not both 
             # networks:  [{port: { get_param: port }, port: {get_resource: backend_port} }]
-            networks:  [{port: { get_param: port }}]                
+            # networks:  [{port: { get_param: port }}]    # outside port
+            networks:  [{port: {get_resource: server_port} }]              
 
 outputs:
-    networks_out:
-        description: vm networks
-        value: { get_attr: [Servertemplate, networks]}
+    port:
+        description: port
+        value: { get_resource: server_port }

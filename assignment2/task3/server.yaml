@@ -103,26 +103,13 @@ resources:
             router_id: { get_resource: router1 }
             subnet: { get_resource: private_subnet }
 
-    frontend_port:
-        type: OS::Neutron::Port
-        properties:
-            name:
-                str_replace:
-                    template: floatingport-VM_NAME
-                    params:
-                        VM_NAME: { get_param: name }
-            network_id: { get_resource: private_net }
-            security_groups: [{get_resource: ssh_ping_security}, {get_resource: http_security}]
-            fixed_ips:
-                - subnet_id: { get_resource: private_subnet }
-
 
     frontend_floating_ip:
         type: OS::Neutron::FloatingIP
         description: External floating ip
         properties:
             floating_network: { get_param: network_public }
-            port_id: { get_resource: frontend_port }
+            port_id: { get_attr: [frontend, port] }
 
 
     frontend:
@@ -132,24 +119,14 @@ resources:
             flavor: Cloud Computing
             availability_zone: Cloud Computing 2017
             image: ubuntu-16.04
-            security_groups: [{ get_resource: ssh_ping_security }] 
+            security_groups: [{get_resource: ssh_ping_security}, {get_resource: http_security}]
             private_net: { get_resource: private_net }
             name: 
                 str_replace:
                     template: $srv-Front
                     params: 
                         $srv: {get_param : server}
-            port: {get_resource: frontend_port}
-            subnet: {get_resource: private_subnet }     
-    
-    backend_port:
-        type: OS::Neutron::Port
-        properties:
-            name: backend_port
-            network_id: { get_resource: private_net }
-            security_groups: [{get_resource: ssh_ping_security}]
-            fixed_ips:
-                - subnet_id: { get_resource: private_subnet }            
+            subnet: {get_resource: private_subnet }              
 
     backedGroup:
         type: OS::Heat::ResourceGroup
@@ -169,7 +146,6 @@ resources:
                             template: $srv-Back-%index%
                             params: 
                                 $srv: {get_param : server}
-                    port: {get_resource: backend_port }
                     subnet: {get_resource: private_subnet }
         
 
