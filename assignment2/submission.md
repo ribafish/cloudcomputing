@@ -623,7 +623,7 @@ rtt min/avg/max/mdev = 15.114/15.114/15.114/0.000 ms
 ```
 $ scp -i group06key.key group06key.key  ubuntu@10.200.2.33:~
 Enter passphrase for key 'group06key.key': 
-group06key.key                                                                                            100% 1766     1.7KB/s   00:00    
+group06key.key        100% 1766     1.7KB/s   00:00    
 ```
 
 * ssh from frontend to backend servers and test internet connection from backend (same on both, shown only for first)
