@@ -1,0 +1,17 @@
+version: "3"
+services:
+  backend:
+    image: gitlab-registry.tubit.tu-berlin.de/jensk/cc17-docker-registry/frontend
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.hostname == ${STACK_NAME}-frontend
+    environment:
+      - CC_BACKEND_SERVERS=${CC_BACKEND_SERVERS}​
+    ports: 
+      - "80:80"
+    volumes:
+      - /etc:/etc/hypervisor_etc
