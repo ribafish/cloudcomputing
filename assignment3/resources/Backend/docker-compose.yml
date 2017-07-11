@@ -1,15 +1,15 @@
-version: "2"
+version: "3"
 services:
   backend:
-    image: gitlab-registry.tubit.tu-berlin.de/jensk/cc17-docker-registry/backend
+    image: gitlab-registry.tubit.tu-berlin.de/jensk/cc17-docker-registry/backend:latest
     ports: 
       - "8000:80"
     volumes:
-      - /etc:/etc/hypervisor_etc
+      - /etc:/hypervisor_etc
     deploy:
       replicas: 5
       restart_policy:
         condition: on-failure
       placement:
         constraints:
-          - node.hostname != ${STACK_NAME}-frontend
+          - node.hostname != assignment3-stack-frontend

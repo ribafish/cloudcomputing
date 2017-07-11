@@ -10,7 +10,7 @@ VOLUME /hypervisor_etc
 
 EXPOSE 80
 
-RUN echo "./fix-nginx-conf.sh $CC_BACKEND_SERVERS" > entrypoint.sh; \
+RUN echo "./fix-nginx-conf.sh \"\$CC_BACKEND_SERVERS\"" > entrypoint.sh; \
     echo "nginx" >> entrypoint.sh
 
 

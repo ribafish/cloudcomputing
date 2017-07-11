@@ -9,7 +9,8 @@ STACK="$1"
 echo "Obtainining information about stack ${STACK}..."
 export MASTER_FLOATING=$(openstack floating ip list -f value | awk '{print $2}')
 export LC_MASTER_PRIVATE=$(openstack floating ip list -f json | jq '.[0]."Fixed IP Address"')
-export LC_BACKEND_IPS=$(openstack server list --name ".*backend-[0-9]*$" -f json | jq  '.[].Networks | split("=")[1]' | xargs)
+export LC_BACKEND_IPS=$(openstack server list --name backend-[0-9]* -f json | jq -r '[.[].Networks] | map(split("=")[1]) | @tsv')
+
 
 # Copy both docker-compose files to the frontend server
 scp ./Backend/docker-compose.yml ubuntu@${MASTER_FLOATING}:/home/ubuntu/Backend/
@@ -34,24 +35,24 @@ SSHOPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=3 -o BatchMode=yes"
 ssh-keyscan $LC_BACKEND_IPS > ~/.ssh/known_hosts
 
 # Obtain a token that can be used to join the swarm as a worker
-TOKEN=$(sudo docker swarm join-token -q manager 2>/dev/null)
+TOKEN=$(sudo docker swarm join-token -q worker 2>/dev/null)
 
 # Prepare the script to execute on the backends to join the docker swarm.
 # First make sure that docker is running properly...
 backend_setup_1="{ sudo docker ps &> /dev/null || sudo service docker restart; }"
 
 # ... then join the docker swarm on the frontend server
-backend_setup_2="sudo docker swarm join $TOKEN"
+backend_setup_2="sudo docker swarm join --token $TOKEN $LC_MASTER_PRIVATE"
 
 # Connect to the backend servers and make them join the swarm
 for i in $LC_BACKEND_IPS; do ssh $SSHOPTS ubuntu@$i "$backend_setup_1 && $backend_setup_2"; done
-exit 0
+
 # Launch the backend stack
-# sudo -E docker [[TODO]]
+sudo -E docker stack deploy --compose-file ./Backend/docker-compose.yml assignment3
 
 # Launch the frontend stack
 export CC_BACKEND_SERVERS="$LC_BACKEND_IPS"
-# sudo -E docker [[TODO]]
+sudo -E docker stack deploy --compose-file ./Frontend/docker-compose.yml assignment3
 
 xxxxxxxxxxxxxxxxx
 

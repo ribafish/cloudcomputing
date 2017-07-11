@@ -1,2 +1,0 @@
-scp -r -i "~/.ssh/open_stack" ~/Projects/tub/cc/assignment3/resources/Backend/ ubuntu@10.200.2.4:/home/ubuntu
-scp -r -i "~/.ssh/open_stack" ~/Projects/tub/cc/assignment3/resources/Frontend/ ubuntu@10.200.2.4:/home/ubuntu
